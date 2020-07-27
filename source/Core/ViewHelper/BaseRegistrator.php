@@ -55,15 +55,15 @@ abstract class BaseRegistrator
      */
     protected function formLocalFileUrl($fullUrl)
     {
+        $isAdmin = $this->config->isAdmin();
         $parts = explode('?', $fullUrl);
-        $url = $parts[0];
+        $url = $this->config->getResourceUrl($parts[0], $isAdmin);
         $parameters = $parts[1] ?? '';
         if (empty($parameters)) {
             if (Registry::getUtilsUrl()->isCurrentShopHost($url)) {
                 $path = $this->getPathByUrl($url);
             } else {
-                $path = $this->config->getResourcePath($url, $this->config->isAdmin());
-                $url = $this->config->getResourceUrl($url, $this->config->isAdmin());
+                $path = $this->config->getResourcePath($url, $isAdmin);
             }
             $parameters = $this->getFileModificationTime($path);
         }
