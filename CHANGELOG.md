@@ -156,6 +156,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     - Method: `OxidEsales\EshopCommunity\Core\Controller\BaseController::showBetaNote()`
 - Suggest (Recommend Product) feature [see](#654---2020-04-21)
 - News feature [see](#656---unreleased)
+- 'theme:flow' defaults within 'initial_data.sql'
+- Supporting two stars (**) in modules composer blacklist-filter, in order to use standard Symfony/finder functionality
 
 ### Fixed
 - Fix not working actions and promotions [#0005526](https://bugs.oxid-esales.com/view.php?id=5526)
@@ -187,16 +189,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     
 ### Security
 
-## [6.5.6] - unreleased
+## [6.5.7] - unreleased
+
+### Added
+- Add remove module configuration command
+- Support symfony's optional class for named services
+
+### Deprecated
+- Use of two stars (**) for filter strings in modules composer blacklist-filter.
+
+## [6.5.6] - 2020-07-16
 
 ### Added
 - Add module migrations
+- New language constants in `Application/translations/[de/en]/lang.php` [PR-821](https://github.com/OXID-eSales/oxideshop_ce/pull/821)
+    - `PAGE_TITLE_START`
+- PHPCodeSniffer and PSR12 Coding guidelines
 
 ### Renamed
 - Price alert is renamed to wished price
 
 ### Fixed
 - MariaDB column default values must be trimmed [PR-796](https://github.com/OXID-eSales/oxideshop_ce/pull/796)
+- Keep track of action type in Article model onChange method
 - Module class extensions cannot be sorted in backend [#0007116](https://bugs.oxid-esales.com/view.php?id=7116)
 - Take oxsort field into account for showing cross-seling articles [PR-738](https://github.com/OXID-eSales/oxideshop_ce/pull/738)
 - Fix second page of article list load via SEO [#0007014](https://bugs.oxid-esales.com/view.php?id=7014) [PR-740](https://github.com/OXID-eSales/oxideshop_ce/pull/740)
@@ -205,11 +220,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     - [PR-815](https://github.com/OXID-eSales/oxideshop_ce/pull/815)
     - [PR-816](https://github.com/OXID-eSales/oxideshop_ce/pull/816)
 - Fix Shop deletes savedbasket from all subshops when discarding reservation basket [#0007136](https://bugs.oxid-esales.com/view.php?id=7136)
+- Fix a bug with composer uninstall if module has custom source  [#0007137](https://bugs.oxid-esales.com/view.php?id=7137)
+- Fix composer update changes module state in yaml  [#0007130](https://bugs.oxid-esales.com/view.php?id=7130)
 
 ### Changed
 - jQuery UI updated to v1.12.1
 - Imports in `generated_services.yaml` changed from absolute paths to relative
 - Updated PHPMailer to v6.1.6
+- Make module deactivation possible if module service is missing in generated_services.yaml
 
 ### Deprecated
 - News feature:
@@ -1090,6 +1108,7 @@ See
 - [OXID eShop v6.0.0 Beta1: Detailed Code Changelog](https://oxidforge.org/en/oxid-eshop-v6-0-0-beta1-detailed-code-changelog.html)
 
 [Unreleased]: https://github.com/OXID-eSales/oxideshop_ce/compare/b-6.2.x...master
+[6.5.7]: https://github.com/OXID-eSales/oxideshop_ce/compare/v6.5.6...v6.5.7
 [6.5.6]: https://github.com/OXID-eSales/oxideshop_ce/compare/v6.5.5...v6.5.6
 [6.5.5]: https://github.com/OXID-eSales/oxideshop_ce/compare/v6.5.4...v6.5.5
 [6.5.4]: https://github.com/OXID-eSales/oxideshop_ce/compare/v6.5.3...v6.5.4

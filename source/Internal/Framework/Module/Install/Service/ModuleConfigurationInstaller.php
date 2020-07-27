@@ -13,11 +13,13 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Dao\Projec
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ModuleConfiguration;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ProjectConfiguration;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\DataObject\ShopConfiguration;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Service\ModuleConfigurationMergingServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\MetaData\Dao\ModuleConfigurationDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\MetaData\Exception\InvalidMetaDataException;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\BasicContextInterface;
 use Webmozart\PathUtil\Path;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Service\{
+    ModuleConfigurationMergingServiceInterface
+};
 
 class ModuleConfigurationInstaller implements ModuleConfigurationInstallerInterface
 {
@@ -87,6 +89,22 @@ class ModuleConfigurationInstaller implements ModuleConfigurationInstallerInterf
         foreach ($projectConfiguration->getShopConfigurations() as $shopConfiguration) {
             if ($shopConfiguration->hasModuleConfiguration($moduleConfiguration->getId())) {
                 $shopConfiguration->deleteModuleConfiguration($moduleConfiguration->getId());
+            }
+        }
+
+        $this->projectConfigurationDao->save($projectConfiguration);
+    }
+
+    /**
+     * @param string $moduleId
+     */
+    public function uninstallById(string $moduleId): void
+    {
+        $projectConfiguration = $this->projectConfigurationDao->getConfiguration();
+
+        foreach ($projectConfiguration->getShopConfigurations() as $shopConfiguration) {
+            if ($shopConfiguration->getModuleConfiguration($moduleId)) {
+                $shopConfiguration->deleteModuleConfiguration($moduleId);
             }
         }
 
