@@ -207,19 +207,21 @@ class ShopConfigurationDao implements ShopConfigurationDaoInterface
      */
     private function getConfigurationFromStorage(int $shopId): ShopConfiguration
     {
-        $data = $this->mergeShopConfigurationDataWithEnvironmentData(
-            $this->getShopConfigurationData($shopId),
-            $this->shopEnvironmentConfigurationDao->get($shopId)
+        return $this->shopConfigurationMapper->fromData(
+            $this->getMergedConfiguration($shopId)
         );
-
-        return $this->shopConfigurationMapper->fromData($data);
     }
 
-    private function mergeShopConfigurationDataWithEnvironmentData(
-        array $shopConfigurationData,
-        array $environmentShopConfigurationData
-    ): array {
-        return array_replace_recursive($shopConfigurationData, $environmentShopConfigurationData);
+    private function getMergedConfiguration(int $shopId): array
+    {
+        $shopConfiguration = $this->getShopConfigurationData($shopId);
+        $environmentConfiguration = $this->shopEnvironmentConfigurationDao->get($shopId);
+        try {
+            $this->canMergeConfigurations($shopConfiguration, $environmentConfiguration);
+        } catch (\UnexpectedValueException $e) {
+            return $shopConfiguration;
+        }
+        return array_replace_recursive($shopConfiguration, $environmentConfiguration);
     }
 
     /**
@@ -229,7 +231,7 @@ class ShopConfigurationDao implements ShopConfigurationDaoInterface
      */
     private function isShopIdExists(int $shopId): bool
     {
-        return in_array($shopId, $this->getShopIds(), true);
+        return \in_array($shopId, $this->getShopIds(), true);
     }
 
     /**
@@ -250,5 +252,21 @@ class ShopConfigurationDao implements ShopConfigurationDaoInterface
             );
         }
         return $data;
+    }
+
+    /**
+     * @param array $shopConfiguration
+     * @param array $environmentConfiguration
+     */
+    private function canMergeConfigurations(array $shopConfiguration, array $environmentConfiguration): void
+    {
+        if (empty($environmentConfiguration['modules'])) {
+            return;
+        }
+        foreach (\array_keys($environmentConfiguration['modules']) as $moduleId) {
+            if (!isset($shopConfiguration['modules'][$moduleId])) {
+                throw new \UnexpectedValueException("Module '$moduleId' not found in shop configuration");
+            }
+        }
     }
 }
